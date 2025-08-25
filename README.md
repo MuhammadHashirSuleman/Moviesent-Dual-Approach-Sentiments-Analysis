@@ -91,24 +91,7 @@ Test the app with these reviews:
 - **Neutral**: "It was an average film, nothing special but watchable enough." (Expect: Neutral, ~50-60% Neutral probability)
 - **Positive**: "A fantastic movie with brilliant performances and an inspiring plot!" (Expect: Positive, ~85% Positive probability)
 
-## Troubleshooting
-- **Neutral Predictions Fail**:
-  - Check `evaluation.py` output for Neutral (class 1) precision/recall.
-  - Increase Neutral oversampling in `model_training.py` (`max_size_neu = 4500`).
-  - Fine-tune LSTM with lower learning rate (`1e-5`) or more epochs (7).
-- **Model Loading Errors**:
-  - Verify model files in `models/`.
-  - Rerun `python main.py --train`.
-- **TemplateNotFound**:
-  - Ensure `index.html` is in `templates/`.
-- **Other Errors**:
-  - Clear `__pycache__`:
-    ```bash
-    rmdir /s /q "G:\Ezitech Internship\moviesent-project\src\__pycache__"
-    ```
-  - Share the full traceback.
 
 ## Notes
-- Neutral predictions are improved by oversampling (4,000 Neutral samples) and incremental retraining.
 - SOTA for SST-3 is ~80-85% with BERT, so 80-85% is realistic. <grok:render type="render_inline_citation"><argument name="citation_id">21</argument></grok:render>
-- Contact: Developed during Ezitech Internship, August 2025.
+- Contact: Developed during Internship, August 2025.
