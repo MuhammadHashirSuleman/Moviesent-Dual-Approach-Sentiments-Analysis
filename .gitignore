@@ -1,0 +1,54 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# Model files
+models/*
+!models/.gitkeep
+
+# Large datasets and embeddings
+data/*
+!data/.gitkeep
+
+# IDE and editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+
+# Jupyter notebooks and checkpoints
+*.ipynb
+.ipynb_checkpoints/
+
+# Logs and temporary files
+*.log
+*.tmp
+*.bak
+*.swp
+*~
+
+# Dependency directories
+pip-wheel-metadata/
+dist/
+build/
+*.egg-info/
+
+# Testing and coverage
+.coverage
+coverage.xml
+*.cover
+*.pytest_cache/
+
+# Environment files
+.env
+*.env

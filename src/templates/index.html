@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Sentiment Analysis</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+        *{
+            color:white;
+        }
+        body {
+            background-color: #1e1e2e;
+            color: #ffffff;
+            font-family: 'Arial', sans-serif;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            color: #2ecc71;
+        }
+        .navbar {
+            background-color: #2e2e3e;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+        .navbar-brand, .nav-link {
+            color: #ffffff !important;
+        }
+        .container {
+            max-width: 800px;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+        .card {
+            background-color: #2e2e3e;
+            border: 1px solid #44475a;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .form-control, .form-select {
+            background-color: #3b3b4b;
+            color: #ffffff;
+            border: 1px solid #44475a;
+        }
+        .form-control:focus, .form-select:focus {
+            background-color: #3b3b4b;
+            color: #ffffff;
+            border-color: #00d4b5;
+            box-shadow: 0 0 5px rgba(0, 212, 181, 0.5);
+        }
+        .form-control::placeholder {
+            color: #cccccc;
+        }
+        .btn-primary {
+            background-color: #00d4b5;
+            border-color: #00d4b5;
+            transition: background-color 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #00b598;
+            border-color: #00b598;
+        }
+        .alert-info {
+            background-color: #2e2e3e;
+            border-color: #00d4b5;
+            color: #ffffff;
+        }
+        .alert-danger {
+            background-color: #ff5555;
+            border-color: #ff3333;
+            color: #ffffff;
+        }
+        .footer {
+            background-color: #2e2e3e;
+            padding: 1rem 0;
+            text-align: center;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+            color: #ffffff;
+        }
+    </style>
+    <script>
+        async function predictSentiment() {
+            const text = document.getElementById('review').value;
+            const model = document.getElementById('model').value;
+            const response = await fetch('/predict', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text: text, model: model })
+            });
+            const result = await response.json();
+            const resultDiv = document.getElementById('result');
+            if (result.error) {
+                resultDiv.innerHTML = `<div class="alert alert-danger">${result.error}</div>`;
+            } else {
+                resultDiv.innerHTML = `
+                    <div class="alert alert-info">
+                        <strong>Sentiment:</strong> ${result.sentiment}<br>
+                        <strong>Review:</strong> ${result.text}<br>
+                        <strong>Model:</strong> ${result.model}<br>
+                        <strong>Probabilities:</strong> Negative: ${(result.probabilities[0]*100).toFixed(2)}%, 
+                        Neutral: ${(result.probabilities[1]*100).toFixed(2)}%, 
+                        Positive: ${(result.probabilities[2]*100).toFixed(2)}%
+                    </div>`;
+            }
+        }
+
+        async function loadModels() {
+            const response = await fetch('/models');
+            const data = await response.json();
+            const modelSelect = document.getElementById('model');
+            modelSelect.innerHTML = data.models.map(m => `<option value="${m}">${m}</option>`).join('');
+        }
+        window.onload = loadModels;
+    </script>
+</head>
+<body>
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">Movie Sentiment Analysis</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="card p-4">
+            <h1 class="text-center mb-4">Movie Review Sentiment Analysis</h1>
+            <div class="form-group mb-3">
+                <label for="review" class="form-label">Enter Movie Review:</label>
+                <textarea id="review" class="form-control" rows="5" required placeholder="Type your movie review here..."></textarea>
+            </div>
+            <div class="form-group mb-3">
+                <label for="model" class="form-label">Select Model:</label>
+                <select id="model" class="form-select">
+                    <option value="" disabled selected>Loading models...</option>
+                </select>
+            </div>
+            <div class="text-center">
+                <button onclick="predictSentiment()" class="btn btn-primary">Analyze Sentiment</button>
+            </div>
+            <div id="result" class="mt-4"></div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 Movie Sentiment Analysis. Developed during Ezitech Internship. Powered by xAI.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
+</html>
