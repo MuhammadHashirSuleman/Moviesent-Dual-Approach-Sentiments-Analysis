@@ -5,111 +5,543 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Movie Sentiment Analysis</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        *{
-            color:white;
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --primary-black: #0a0a0a;
+            --secondary-black: #111111;
+            --card-black: #1a1a1a;
+            --emerald: #10b981;
+            --emerald-light: #34d399;
+            --emerald-dark: #059669;
+            --text-primary: #ffffff;
+            --text-secondary: #d1d5db;
+            --text-muted: #9ca3af;
+            --border-color: #374151;
+            --shadow-emerald: rgba(16, 185, 129, 0.3);
         }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            background-color: #1e1e2e;
-            color: #ffffff;
-            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, var(--primary-black) 0%, var(--secondary-black) 100%);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
         }
-        h1, h2, h3, h4, h5, h6 {
-            color: #2ecc71;
-        }
-        .navbar {
-            background-color: #2e2e3e;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-        }
-        .navbar-brand, .nav-link {
-            color: #ffffff !important;
-        }
-        .container {
-            max-width: 800px;
-            margin-top: 2rem;
-            margin-bottom: 2rem;
-        }
-        .card {
-            background-color: #2e2e3e;
-            border: 1px solid #44475a;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-        .form-control, .form-select {
-            background-color: #3b3b4b;
-            color: #ffffff;
-            border: 1px solid #44475a;
-        }
-        .form-control:focus, .form-select:focus {
-            background-color: #3b3b4b;
-            color: #ffffff;
-            border-color: #00d4b5;
-            box-shadow: 0 0 5px rgba(0, 212, 181, 0.5);
-        }
-        .form-control::placeholder {
-            color: #cccccc;
-        }
-        .btn-primary {
-            background-color: #00d4b5;
-            border-color: #00d4b5;
-            transition: background-color 0.3s ease;
-        }
-        .btn-primary:hover {
-            background-color: #00b598;
-            border-color: #00b598;
-        }
-        .alert-info {
-            background-color: #2e2e3e;
-            border-color: #00d4b5;
-            color: #ffffff;
-        }
-        .alert-danger {
-            background-color: #ff5555;
-            border-color: #ff3333;
-            color: #ffffff;
-        }
-        .footer {
-            background-color: #2e2e3e;
-            padding: 1rem 0;
-            text-align: center;
-            position: relative;
-            bottom: 0;
+
+        /* Animated Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            color: #ffffff;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, var(--emerald) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, var(--emerald-light) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, var(--emerald-dark) 0%, transparent 50%);
+            opacity: 0.03;
+            animation: float 20s ease-in-out infinite;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0px, 0px) rotate(0deg); }
+            33% { transform: translate(30px, -30px) rotate(120deg); }
+            66% { transform: translate(-20px, 20px) rotate(240deg); }
+        }
+
+        /* Navbar Styling */
+        .navbar {
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-brand {
+            color: var(--text-primary) !important;
+            font-weight: 700;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .navbar-brand::before {
+            content: '🎬';
+            font-size: 1.8rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .nav-link {
+            color: var(--text-secondary) !important;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: var(--emerald) !important;
+            transform: translateY(-2px);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--emerald), var(--emerald-light));
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        /* Container and Layout */
+        .container {
+            max-width: 900px;
+            margin: 3rem auto;
+            padding: 0 1rem;
+        }
+
+        /* Card Styling */
+        .main-card {
+            background: linear-gradient(145deg, var(--card-black), rgba(26, 26, 26, 0.8));
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(16, 185, 129, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            padding: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .main-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, var(--emerald), transparent);
+            animation: rotate 20s linear infinite;
+            opacity: 0.1;
+            z-index: -1;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Typography */
+        h1 {
+            color: var(--text-primary);
+            font-weight: 700;
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, var(--emerald), var(--emerald-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--emerald), var(--emerald-light));
+            border-radius: 2px;
+            transform: translateX(-50%);
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .form-label {
+            color: var(--text-primary);
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .form-label i {
+            color: var(--emerald);
+            font-size: 1.2rem;
+        }
+
+        .form-control, .form-select {
+            background: rgba(26, 26, 26, 0.8);
+            color: var(--text-primary);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .form-control:focus, .form-select:focus {
+            background: rgba(26, 26, 26, 0.9);
+            color: var(--text-primary);
+            border-color: var(--emerald);
+            box-shadow: 
+                0 0 0 3px var(--shadow-emerald),
+                0 10px 20px rgba(0, 0, 0, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .form-control::placeholder {
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 150px;
+        }
+
+        /* Button Styling */
+        .btn-analyze {
+            background: linear-gradient(135deg, var(--emerald), var(--emerald-light));
+            border: none;
+            color: white;
+            padding: 1rem 3rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            box-shadow: 
+                0 10px 20px rgba(16, 185, 129, 0.3),
+                0 0 0 1px rgba(16, 185, 129, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-analyze::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-analyze:hover {
+            transform: translateY(-3px);
+            box-shadow: 
+                0 15px 30px rgba(16, 185, 129, 0.4),
+                0 0 0 1px rgba(16, 185, 129, 0.2);
+        }
+
+        .btn-analyze:hover::before {
+            left: 100%;
+        }
+
+        .btn-analyze:active {
+            transform: translateY(-1px);
+        }
+
+        /* Result Display */
+        #result {
+            margin-top: 2rem;
+        }
+
+        .alert {
+            border: none;
+            border-radius: 15px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+            animation: slideInUp 0.5s ease-out;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-info {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(52, 211, 153, 0.1));
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: var(--text-primary);
+            position: relative;
+        }
+
+        .alert-info::before {
+            content: '✨';
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            animation: sparkle 2s infinite;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 1; transform: scale(1) rotate(0deg); }
+            50% { opacity: 0.7; transform: scale(1.1) rotate(180deg); }
+        }
+
+        .alert-danger {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(220, 38, 38, 0.1));
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: var(--text-primary);
+        }
+
+        /* Probability Bars */
+        .probability-container {
+            margin-top: 1rem;
+        }
+
+        .probability-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            gap: 1rem;
+        }
+
+        .probability-label {
+            min-width: 80px;
+            font-weight: 600;
+        }
+
+        .probability-bar {
+            flex: 1;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .probability-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--emerald), var(--emerald-light));
+            border-radius: 4px;
+            transition: width 1s ease;
+            animation: fillBar 1s ease-out;
+        }
+
+        @keyframes fillBar {
+            from { width: 0; }
+        }
+
+        .probability-value {
+            min-width: 60px;
+            text-align: right;
+            font-weight: 600;
+            color: var(--emerald-light);
+        }
+
+        /* Footer */
+        .footer {
+            background: linear-gradient(135deg, var(--card-black), rgba(17, 17, 17, 0.9));
+            padding: 2rem 0;
+            text-align: center;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border-color);
+            margin-top: 4rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .footer p {
+            margin: 0;
+            font-weight: 500;
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--emerald);
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+            margin-left: 0.5rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-card {
+                padding: 2rem 1.5rem;
+                margin: 1rem;
+                border-radius: 15px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .btn-analyze {
+                padding: 0.875rem 2rem;
+                width: 100%;
+            }
+        }
+
+        /* Hover Effects for Interactive Elements */
+        .form-control:hover, .form-select:hover {
+            border-color: rgba(16, 185, 129, 0.5);
+            transform: translateY(-1px);
+        }
+
+        /* Scroll Animation */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
     <script>
         async function predictSentiment() {
-            const text = document.getElementById('review').value;
-            const model = document.getElementById('model').value;
-            const response = await fetch('/predict', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ text: text, model: model })
-            });
-            const result = await response.json();
-            const resultDiv = document.getElementById('result');
-            if (result.error) {
-                resultDiv.innerHTML = `<div class="alert alert-danger">${result.error}</div>`;
-            } else {
-                resultDiv.innerHTML = `
-                    <div class="alert alert-info">
-                        <strong>Sentiment:</strong> ${result.sentiment}<br>
-                        <strong>Review:</strong> ${result.text}<br>
-                        <strong>Model:</strong> ${result.model}<br>
-                        <strong>Probabilities:</strong> Negative: ${(result.probabilities[0]*100).toFixed(2)}%, 
-                        Neutral: ${(result.probabilities[1]*100).toFixed(2)}%, 
-                        Positive: ${(result.probabilities[2]*100).toFixed(2)}%
-                    </div>`;
+            const button = document.querySelector('.btn-analyze');
+            const originalText = button.innerHTML;
+            button.innerHTML = 'Analyzing<span class="loading"></span>';
+            button.disabled = true;
+
+            try {
+                const text = document.getElementById('review').value;
+                const model = document.getElementById('model').value;
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: text, model: model })
+                });
+                const result = await response.json();
+                const resultDiv = document.getElementById('result');
+                
+                if (result.error) {
+                    resultDiv.innerHTML = `<div class="alert alert-danger"><i class="fas fa-exclamation-triangle"></i> ${result.error}</div>`;
+                } else {
+                    const probabilities = result.probabilities;
+                    const labels = ['Negative', 'Neutral', 'Positive'];
+                    const colors = ['#ef4444', '#f59e0b', '#10b981'];
+                    
+                    let probabilityBars = '';
+                    probabilities.forEach((prob, index) => {
+                        probabilityBars += `
+                            <div class="probability-item">
+                                <span class="probability-label" style="color: ${colors[index]}">${labels[index]}</span>
+                                <div class="probability-bar">
+                                    <div class="probability-fill" style="width: ${prob*100}%; background: linear-gradient(90deg, ${colors[index]}, ${colors[index]}aa);"></div>
+                                </div>
+                                <span class="probability-value">${(prob*100).toFixed(1)}%</span>
+                            </div>
+                        `;
+                    });
+
+                    const sentimentIcon = result.sentiment === 'Positive' ? '😊' : 
+                                        result.sentiment === 'Negative' ? '😞' : '😐';
+                    
+                    resultDiv.innerHTML = `
+                        <div class="alert alert-info">
+                            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                                <span style="font-size: 2rem;">${sentimentIcon}</span>
+                                <div>
+                                    <strong style="color: var(--emerald-light); font-size: 1.3rem;">Sentiment: ${result.sentiment}</strong><br>
+                                    <span style="color: var(--text-secondary);">Model: ${result.model}</span>
+                                </div>
+                            </div>
+                            <div style="background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                                <strong>Review:</strong> "${result.text}"
+                            </div>
+                            <div class="probability-container">
+                                <strong style="color: var(--emerald); margin-bottom: 0.75rem; display: block;">Confidence Scores:</strong>
+                                ${probabilityBars}
+                            </div>
+                        </div>`;
+                }
+            } catch (error) {
+                document.getElementById('result').innerHTML = `<div class="alert alert-danger"><i class="fas fa-exclamation-triangle"></i> An error occurred while analyzing the sentiment.</div>`;
+            } finally {
+                button.innerHTML = originalText;
+                button.disabled = false;
             }
         }
 
         async function loadModels() {
-            const response = await fetch('/models');
-            const data = await response.json();
             const modelSelect = document.getElementById('model');
-            modelSelect.innerHTML = data.models.map(m => `<option value="${m}">${m}</option>`).join('');
+            modelSelect.innerHTML = '<option value="" disabled selected>Loading models...</option>';
+            
+            try {
+                const response = await fetch('/models');
+                const data = await response.json();
+                modelSelect.innerHTML = data.models.map(m => `<option value="${m}">${m}</option>`).join('');
+            } catch (error) {
+                modelSelect.innerHTML = '<option value="" disabled>Error loading models</option>';
+            }
         }
-        window.onload = loadModels;
+
+        // Initialize page
+        window.onload = () => {
+            loadModels();
+            // Add fade-in animation to elements
+            document.querySelectorAll('.fade-in').forEach((el, index) => {
+                el.style.animationDelay = `${index * 0.1}s`;
+            });
+        };
+
+        // Add enter key support for textarea
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('review').addEventListener('keydown', function(e) {
+                if (e.ctrlKey && e.key === 'Enter') {
+                    predictSentiment();
+                }
+            });
+        });
     </script>
 </head>
 <body>
@@ -123,7 +555,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="/">Home</a>
+                        <a class="nav-link" href="/"><i class="fas fa-home"></i> Home</a>
                     </li>
                 </ul>
             </div>
@@ -132,28 +564,42 @@
 
     <!-- Main Content -->
     <div class="container">
-        <div class="card p-4">
-            <h1 class="text-center mb-4">Movie Review Sentiment Analysis</h1>
-            <div class="form-group mb-3">
-                <label for="review" class="form-label">Enter Movie Review:</label>
-                <textarea id="review" class="form-control" rows="5" required placeholder="Type your movie review here..."></textarea>
+        <div class="main-card fade-in">
+            <h1>Movie Review Sentiment Analysis</h1>
+            
+            <div class="form-group fade-in">
+                <label for="review" class="form-label">
+                    <i class="fas fa-comment-alt"></i>
+                    Enter Movie Review:
+                </label>
+                <textarea id="review" class="form-control" rows="5" required placeholder="Share your thoughts about the movie... (Press Ctrl+Enter to analyze)"></textarea>
             </div>
-            <div class="form-group mb-3">
-                <label for="model" class="form-label">Select Model:</label>
+            
+            <div class="form-group fade-in">
+                <label for="model" class="form-label">
+                    <i class="fas fa-brain"></i>
+                    Select AI Model:
+                </label>
                 <select id="model" class="form-select">
                     <option value="" disabled selected>Loading models...</option>
                 </select>
             </div>
-            <div class="text-center">
-                <button onclick="predictSentiment()" class="btn btn-primary">Analyze Sentiment</button>
+            
+            <div class="text-center fade-in">
+                <button onclick="predictSentiment()" class="btn-analyze">
+                    <i class="fas fa-magic"></i> Analyze Sentiment
+                </button>
             </div>
-            <div id="result" class="mt-4"></div>
+            
+            <div id="result"></div>
         </div>
     </div>
 
     <!-- Footer -->
     <footer class="footer">
-        <p>&copy; 2025 Movie Sentiment Analysis. Developed during Ezitech Internship. Powered by xAI.</p>
+        <div class="container">
+            <p><i class="fas fa-heart" style="color: var(--emerald);"></i> © 2025 Movie Sentiment Analysis. Developed during Ezitech Internship by MHS.</p>
+        </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
